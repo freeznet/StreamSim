@@ -16,11 +16,12 @@ public class Main {
 		// TODO Auto-generated method stub
 		int tatolFragNum = 100;
 		int maxLengthBlock = 10;
+		double playBackTime = 5;
 		double maxPlayBackTime = 1000;
 		
 		//init video list
 		int[] r = {100,300,500,800,1500};
-		VideoRateList rateList = new VideoRateList(5,r);
+		VideoRateList rateList = new VideoRateList(5,r,playBackTime);
 		
 		//init server list
 		double []sbw = {300,900,200,1400,2500};
@@ -34,7 +35,7 @@ public class Main {
 		
 		//while(maxPlayBackTime!=buffer.getLengthSec())
 		{
-			Block nowBlock = new Block(buffer,slist,maxLengthBlock);
+			Block nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, 3);
 			
 		}
 	}

@@ -1,5 +1,6 @@
 package type;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import kit.Kit;
@@ -7,19 +8,24 @@ import kit.Kit;
 public class Block {
 	private Buffer buffer = null;
 	private int length = 0;
-	private List<Fragment> fragList = null;
+	private List<Fragment> fragList = new ArrayList<Fragment>();
 	private int rate = 0;
+	private double playtime = 0;
 	private Schedule sch = null;
 	private int serverSize = 0;
 	private int allocFrag = 0;
 	private ServerList slist = null;
 	private int fragNum = 0;
 	private int maxLengthBlock = 0;
-	public Block(Buffer buf, ServerList s, int max)
+	private int selectID = 0;
+	public Block(Buffer buf, VideoRateList rateList, ServerList s, int max, int selectID)
 	{
 		this.buffer = buf;
 		this.slist = s;
 		this.maxLengthBlock = max;
+		this.selectID = selectID;
+		this.rate = rateList.getRateList()[selectID];
+		this.playtime = rateList.getPlaybackTime();
 		serverSize = s.getLserver().size();
 		initBlock();
 		System.out.println("fragNum = " +  fragNum + " - - - serverSize = "+ serverSize);
@@ -53,6 +59,12 @@ public class Block {
 			}
 		}
 	}
+	
+	private void initFragment(int id)
+	{
+		Fragment f = new Fragment(this,rate,playtime,id);
+		fragList.add(f);
+	}
 
 	public int getLength() {
 		return length;
@@ -77,5 +89,21 @@ public class Block {
 	}
 	public void setSch(Schedule sch) {
 		this.sch = sch;
+	}
+
+	public int getServerSize() {
+		return serverSize;
+	}
+
+	public void setServerSize(int serverSize) {
+		this.serverSize = serverSize;
+	}
+
+	public ServerList getSlist() {
+		return slist;
+	}
+
+	public void setSlist(ServerList slist) {
+		this.slist = slist;
 	}
 }

@@ -5,10 +5,13 @@ public class VideoRateList {
 	private int[] rateList;
 	private int nowDownload = 0;
 	private int nowPlay = 0;
-	public VideoRateList(int l, int[] r)
+	private double playbackTime = 0;
+
+	public VideoRateList(int l, int[] r, double pt)
 	{
 		this.length = l;
 		this.rateList = r;
+		this.playbackTime = pt;
 	}
 	public int getLength() {
 		return length;
@@ -33,6 +36,12 @@ public class VideoRateList {
 	}
 	public void setNowPlay(int nowPlay) {
 		this.nowPlay = nowPlay;
+	}
+	public double getPlaybackTime() {
+		return playbackTime;
+	}
+	public void setPlaybackTime(double playbackTime) {
+		this.playbackTime = playbackTime;
 	}
 	
 }

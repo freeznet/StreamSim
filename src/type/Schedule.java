@@ -45,6 +45,11 @@ public class Schedule {
 		return x;
 	}
 	
+	public int getX(int a, int b)
+	{
+		return x[a][b];
+	}
+	
 	public void printX()
 	{
 		for(int i=0;i<Smax;i++)
