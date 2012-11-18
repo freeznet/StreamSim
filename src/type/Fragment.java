@@ -27,7 +27,84 @@ public class Fragment {
 		}
 		ret = (playbackTime * bitrate) / ret;
 		downloadDur = ret;
+		//System.out.println("id " + id + " - > download_dur:" + ret);
 		return ret;
+	}
+
+	public Server getDownloadedBy() {
+		return downloadedBy;
+	}
+
+	public void setDownloadedBy(Server downloadedBy) {
+		this.downloadedBy = downloadedBy;
+	}
+
+	public double getDownloadStartTime() {
+		return downloadStartTime;
+	}
+
+	public void setDownloadStartTime(double downloadStartTime) {
+		this.downloadStartTime = downloadStartTime;
+	}
+
+	public double getDownloadEndTime() {
+		return downloadEndTime;
+	}
+
+	public void setDownloadEndTime(double downloadEndTime) {
+		this.downloadEndTime = downloadEndTime;
+	}
+
+	public double getDownloadStartBufferLength() {
+		return downloadStartBufferLength;
+	}
+
+	public void setDownloadStartBufferLength(double downloadStartBufferLength) {
+		this.downloadStartBufferLength = downloadStartBufferLength;
+	}
+
+	public double getDownloadEndBufferLength() {
+		return downloadEndBufferLength;
+	}
+
+	public void setDownloadEndBufferLength(double downloadEndBufferLength) {
+		this.downloadEndBufferLength = downloadEndBufferLength;
+	}
+
+	public double getBitrate() {
+		return bitrate;
+	}
+
+	public void setBitrate(double bitrate) {
+		this.bitrate = bitrate;
+	}
+
+	public double getPlaybackTime() {
+		return playbackTime;
+	}
+
+	public void setPlaybackTime(double playbackTime) {
+		this.playbackTime = playbackTime;
+	}
+
+	public Block getBlock() {
+		return block;
+	}
+
+	public void setBlock(Block block) {
+		this.block = block;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setDownloadDur(double downloadDur) {
+		this.downloadDur = downloadDur;
 	}
 	
 }

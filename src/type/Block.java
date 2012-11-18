@@ -29,8 +29,12 @@ public class Block {
 		serverSize = s.getLserver().size();
 		initBlock();
 		System.out.println("fragNum = " +  fragNum + " - - - serverSize = "+ serverSize);
-		Schedule sch = new Schedule(fragNum,serverSize,slist.getLserver());
+		sch = new Schedule(fragNum,serverSize,slist.getLserver());
 		sch.doSchedule();
+		getDownloadDur(0);
+		getDownloadDur(1);
+		getDownloadDur(2);
+		getDownloadDur(3);
 	}
 
 	public void initBlock()
@@ -58,6 +62,10 @@ public class Block {
 				break;
 			}
 		}
+		for(int i =0;i<fragNum;i++)
+		{
+			initFragment(i);
+		}
 	}
 	
 	private void initFragment(int id)
@@ -65,6 +73,50 @@ public class Block {
 		Fragment f = new Fragment(this,rate,playtime,id);
 		fragList.add(f);
 	}
+	
+	public double getDownloadDur(int n)
+	{
+		double ret = 0;
+		if(n<=fragNum)
+		{
+			double fndur = fragList.get(n).getDownloadDur();
+			double temp = 0;
+			for(int j = 0;j<serverSize;j++)
+			{
+				double t = sch.getX(n, j);
+				double m = 0;
+				for(int i=0;i<=n;i++)
+					m += sch.getX(i, j);
+				temp += t * m;
+			}
+			ret = fndur * temp;
+			System.out.println("Block download dur ("+n+"/"+(fragNum-1)+") - "+ret);
+		}
+		return ret;
+	}
+	
+	public double getalphan(int n)
+	{
+		double ret = 0;
+		double p = 0;
+		double q = 0;
+		for(int i=0;i<getServerSize();i++)
+		{
+			q += sch.getX(n, i) * slist.getLserver().get(i).getBandwidth();
+		}
+		for(int j = 0;j<serverSize;j++)
+		{
+			double t = sch.getX(n, j);
+			double m = 0;
+			for(int i=0;i<=n;i++)
+				m += sch.getX(i, j);
+			p += t * m;
+		}
+		ret = p/q;
+
+		return ret;
+	}
+	
 
 	public int getLength() {
 		return length;
@@ -105,5 +157,53 @@ public class Block {
 
 	public void setSlist(ServerList slist) {
 		this.slist = slist;
+	}
+
+	public Buffer getBuffer() {
+		return buffer;
+	}
+
+	public void setBuffer(Buffer buffer) {
+		this.buffer = buffer;
+	}
+
+	public double getPlaytime() {
+		return playtime;
+	}
+
+	public void setPlaytime(double playtime) {
+		this.playtime = playtime;
+	}
+
+	public int getAllocFrag() {
+		return allocFrag;
+	}
+
+	public void setAllocFrag(int allocFrag) {
+		this.allocFrag = allocFrag;
+	}
+
+	public int getFragNum() {
+		return fragNum;
+	}
+
+	public void setFragNum(int fragNum) {
+		this.fragNum = fragNum;
+	}
+
+	public int getMaxLengthBlock() {
+		return maxLengthBlock;
+	}
+
+	public void setMaxLengthBlock(int maxLengthBlock) {
+		this.maxLengthBlock = maxLengthBlock;
+	}
+
+	public int getSelectID() {
+		return selectID;
+	}
+
+	public void setSelectID(int selectID) {
+		this.selectID = selectID;
 	}
 }
