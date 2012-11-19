@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ServerList {
 	List<Server> lserver = new ArrayList<Server>();
-	public ServerList(double [] s)
+	public ServerList(double [][] s)
 	{
 		int l = s.length;
 		for(int i=0;i<l;i++)
@@ -19,7 +19,7 @@ public class ServerList {
 		for(int i=0;i<lserver.size();i++)
 		{
 			Server ser = lserver.get(i);
-			System.out.println(i + ":" + ser.getId() + " - - - " + ser.getBandwidth());
+			System.out.println(i + ":" + ser.getId() + " - - - " + ser.getBandAvgwidth());
 		}
 	}
 	public List<Server> getLserver() {

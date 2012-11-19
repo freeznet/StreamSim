@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Buffer {
 	private double lengthSec = 0;
+	private double downloadDur = 0;
 	List<Block> bList = null;
 	private double initBufferLength = 0;
 	public Buffer(List<Block> b){
@@ -56,5 +57,23 @@ public class Buffer {
 		double download = bList.get(k).getDownloadDur(bList.get(k).getFragNum()-1);
 		ret -= download;
 		return ret;
+	}
+	public double getDownloadDur() {
+		return downloadDur;
+	}
+	public void setDownloadDur(double downloadDur) {
+		this.downloadDur = downloadDur;
+	}
+	public List<Block> getbList() {
+		return bList;
+	}
+	public void setbList(List<Block> bList) {
+		this.bList = bList;
+	}
+	public double getInitBufferLength() {
+		return initBufferLength;
+	}
+	public void setInitBufferLength(double initBufferLength) {
+		this.initBufferLength = initBufferLength;
 	}
 }

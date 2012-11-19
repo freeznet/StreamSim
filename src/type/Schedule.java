@@ -9,12 +9,14 @@ public class Schedule {
 	private int Nk = 0;
 	private int Smax = 0;
 	private List<Server> lserver = null;
-	public Schedule(int n,int s, List<Server> l)
+	private List<Fragment> fragList = null;
+	public Schedule(int n,int s, List<Server> l, List<Fragment> fragList)
 	{
 		this.Nk = n;
 		this.Smax = s;
 		this.lserver = l;
 		this.x = new int[Nk][Smax];
+		this.fragList = fragList;
 	}
 	public int[][] doSchedule()
 	{
@@ -31,15 +33,20 @@ public class Schedule {
 			double jlist[] = new double[Smax]; 
 			for(j=0;j<Smax;j++)
 			{
-				jlist[j] = (1/lserver.get(j).getBandwidth());
+				jlist[j] = (1/lserver.get(j).getBandAvgwidth());
 				for(int t=0; t<i; t++)
 				{
-					jlist[j] += x[t][j] * (1/lserver.get(j).getBandwidth());
+					jlist[j] += x[t][j] * (1/lserver.get(j).getBandAvgwidth());
 				}
 			}
 			jstar = Kit.getMinId(jlist);
 			//System.out.println("jstar = "+jstar);
 			x[i][jstar] = 1;
+			Fragment f = fragList.get(i);
+			if(f!=null){
+				f.setDownloadedBy(lserver.get(jstar));
+				lserver.get(jstar).assignFragment(f);
+			}
 		}
 		printX();
 		return x;

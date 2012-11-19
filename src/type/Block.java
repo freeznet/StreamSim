@@ -18,7 +18,10 @@ public class Block {
 	private int fragNum = 0;
 	private int maxLengthBlock = 0;
 	private int selectID = 0;
-	public Block(Buffer buf, VideoRateList rateList, ServerList s, int max, int selectID)
+	private double startTime = 0;
+	private List<Block> bList = null;
+	
+	public Block(Buffer buf, VideoRateList rateList, ServerList s, int max, int selectID,List<Block> st)
 	{
 		this.buffer = buf;
 		this.slist = s;
@@ -26,28 +29,36 @@ public class Block {
 		this.selectID = selectID;
 		this.rate = rateList.getRateList()[selectID];
 		this.playtime = rateList.getPlaybackTime();
+		this.bList = st;
 		serverSize = s.getLserver().size();
 		initBlock();
 		System.out.println("fragNum = " +  fragNum + " - - - serverSize = "+ serverSize);
-		sch = new Schedule(fragNum,serverSize,slist.getLserver());
+		sch = new Schedule(fragNum,serverSize,slist.getLserver(), fragList);
 		sch.doSchedule();
 		getDownloadDur(0);
 		getDownloadDur(1);
 		getDownloadDur(2);
 		getDownloadDur(3);
 	}
+	
+	public boolean isFirstBlock()
+	{
+		if(bList.indexOf(this) == 0)
+			return true;
+		else return false;
+	}
 
 	public void initBlock()
 	{
 		serverSize = slist.getLserver().size();
-		double cmin = slist.getLserver().get(serverSize-1).getBandwidth();
+		double cmin = slist.getLserver().get(serverSize-1).getBandwidth(buffer.getDownloadDur());
 		while(true)
 		{
 			slist.getLserver().get(serverSize-1).setNumOfFragReq(1);//nSmax = 1;
 			fragNum = 1;
 			for (int i = 0; i<serverSize-1;i++)
 			{
-				double ci = slist.getLserver().get(i).getBandwidth();
+				double ci = slist.getLserver().get(i).getBandwidth(buffer.getDownloadDur());
 				slist.getLserver().get(i).setNumOfFragReq((int) Kit.round(ci,cmin));
 				//System.out.println(i + " - - - "+ slist.getLserver().get(i).getNumOfFragReq());
 				fragNum += slist.getLserver().get(i).getNumOfFragReq();
@@ -55,7 +66,7 @@ public class Block {
 			if(fragNum>maxLengthBlock)
 			{
 				serverSize--;
-				cmin = slist.getLserver().get(serverSize-1).getBandwidth();
+				cmin = slist.getLserver().get(serverSize-1).getBandwidth(buffer.getDownloadDur());
 			}
 			else
 			{
@@ -70,7 +81,7 @@ public class Block {
 	
 	private void initFragment(int id)
 	{
-		Fragment f = new Fragment(this,rate,playtime,id);
+		Fragment f = new Fragment(this,rate,playtime,id,null);
 		fragList.add(f);
 	}
 	
@@ -102,7 +113,7 @@ public class Block {
 		double q = 0;
 		for(int i=0;i<getServerSize();i++)
 		{
-			q += sch.getX(n, i) * slist.getLserver().get(i).getBandwidth();
+			q += sch.getX(n, i) * slist.getLserver().get(i).getBandAvgwidth();
 		}
 		for(int j = 0;j<serverSize;j++)
 		{
@@ -205,5 +216,13 @@ public class Block {
 
 	public void setSelectID(int selectID) {
 		this.selectID = selectID;
+	}
+
+	public double getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(double startTime) {
+		this.startTime = startTime;
 	}
 }

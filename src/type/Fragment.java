@@ -1,9 +1,11 @@
 package type;
 
+import java.util.List;
+
 public class Fragment {
 	private Server downloadedBy;
 	private double downloadDur;
-	private double downloadStartTime;
+	private double downloadStartTime = 0;
 	private double downloadEndTime;
 	private double downloadStartBufferLength;
 	private double downloadEndBufferLength;
@@ -11,24 +13,59 @@ public class Fragment {
 	private double playbackTime;
 	private Block block;
 	private int id = 0;
-	public Fragment(Block b, double br, double pt, int i){
+	public Fragment(Block b, double br, double pt, int i, Server f){
 		block = b;
 		bitrate = br;
 		playbackTime = pt;
 		id = i;
+		downloadedBy = f;
+		
+		if(block.isFirstBlock() && id == 0){
+			downloadStartBufferLength = 0;
+			downloadStartTime = 0;
+		}
+		else if(id==0)
+		{
+			//downloadStartTime = 
+		}
+		
 	};
 	
 	public double getDownloadDur()
 	{
 		double ret = 0;
-		for(int i=0;i<block.getServerSize();i++)
+		
+		double fileSize = playbackTime * bitrate;
+		double time = downloadStartTime;
+		while(fileSize>0)
 		{
-			ret += block.getSch().getX(id, i) * block.getSlist().getLserver().get(i).getBandwidth();
+			double bw = 0;
+			
+			for(int i=0;i<block.getServerSize();i++)
+			{
+				bw += block.getSch().getX(id, i) * block.getSlist().getLserver().get(i).getBandwidth(time);
+			}
+			double downloadTempDur = 0;
+			
+			double downloadSize = (Math.ceil(time+0.0000000001) - time) * bw;
+			//System.out.println("bw = " + bw + " downloadSize = "+downloadSize);
+			if(fileSize - downloadSize>=0){
+				downloadTempDur = Math.ceil(time) - time;
+				fileSize -= downloadSize;
+			}
+			else
+			{
+				//double s = fileSize;
+				downloadTempDur = fileSize / bw;
+				fileSize = 0;
+			}
+			time += downloadTempDur;
 		}
-		ret = (playbackTime * bitrate) / ret;
-		downloadDur = ret;
+		
+		downloadDur = time - downloadStartTime;
+		downloadEndTime = time;
 		//System.out.println("id " + id + " - > download_dur:" + ret);
-		return ret;
+		return downloadDur;
 	}
 
 	public Server getDownloadedBy() {
