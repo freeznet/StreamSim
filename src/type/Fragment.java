@@ -50,7 +50,7 @@ public class Fragment {
 			double downloadSize = (Math.ceil(time+0.0000000001) - time) * bw;
 			//System.out.println("bw = " + bw + " downloadSize = "+downloadSize);
 			if(fileSize - downloadSize>=0){
-				downloadTempDur = Math.ceil(time) - time;
+				downloadTempDur = Math.ceil(time+0.0000000001) - time;
 				fileSize -= downloadSize;
 			}
 			else
@@ -64,7 +64,13 @@ public class Fragment {
 		
 		downloadDur = time - downloadStartTime;
 		downloadEndTime = time;
-		//System.out.println("id " + id + " - > download_dur:" + ret);
+		if(downloadedBy!=null)
+		{
+			Fragment next = downloadedBy.getNextFragment(this,block);
+			if(next!=null)
+				next.downloadStartTime = downloadEndTime;
+		}
+		//System.out.println("id " + id + " - > downloadStartTime:" + downloadStartTime + " downloadEndTime:" + downloadEndTime);
 		return downloadDur;
 	}
 

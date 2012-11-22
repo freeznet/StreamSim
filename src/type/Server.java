@@ -22,6 +22,26 @@ public class Server {
 		this.bandwidth = bandwidth;
 	}
 	
+	public Fragment getNextFragment(Fragment f, Block b)
+	{
+		Fragment r = null;
+		for(Fragment i:downloadFrag)
+		{
+			if(i==f)
+			{
+				int no = downloadFrag.indexOf(f);
+				if(downloadFrag.indexOf(f) < downloadFrag.size()-1){
+					r = downloadFrag.get(no+1);
+					if(r.getBlock() == b)
+						break;
+					else
+						r = null;
+				}
+			}
+		}
+		return r;
+	}
+	
 	public void assignFragment(Fragment f)
 	{
 		downloadFrag.add(f);
@@ -50,6 +70,19 @@ public class Server {
 		ret = ret / i;
 		return ret;
 	}
+	
+	public double getBandAvgwidth(double sec)
+	{
+		double ret = 0;
+		int i;
+		for(i=0;i<Math.ceil(sec + 0.00000000000000001);i++)
+		{
+			ret += bandwidth[i];
+		}
+		ret = ret / i;
+		return ret;
+	}
+	
 	public double getBandwidth(int sec) {
 		return bandwidth[sec];
 	}

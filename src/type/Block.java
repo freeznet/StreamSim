@@ -20,6 +20,7 @@ public class Block {
 	private int selectID = 0;
 	private double startTime = 0;
 	private List<Block> bList = null;
+	private double qmax, qmin;
 	
 	public Block(Buffer buf, VideoRateList rateList, ServerList s, int max, int selectID,List<Block> st)
 	{
@@ -35,10 +36,9 @@ public class Block {
 		System.out.println("fragNum = " +  fragNum + " - - - serverSize = "+ serverSize);
 		sch = new Schedule(fragNum,serverSize,slist.getLserver(), fragList);
 		sch.doSchedule();
-		getDownloadDur(0);
-		getDownloadDur(1);
-		getDownloadDur(2);
-		getDownloadDur(3);
+		for(int i=0;i<fragNum;i++)
+			getDownloadDur(i);
+		
 	}
 	
 	public boolean isFirstBlock()
@@ -101,7 +101,7 @@ public class Block {
 				temp += t * m;
 			}
 			ret = fndur * temp;
-			System.out.println("Block download dur ("+n+"/"+(fragNum-1)+") - "+ret);
+			System.out.println("Block download dur ("+n+"/"+(fragNum-1)+") - "+ret + "(" + fndur + "*" + temp +")");
 		}
 		return ret;
 	}
@@ -113,7 +113,7 @@ public class Block {
 		double q = 0;
 		for(int i=0;i<getServerSize();i++)
 		{
-			q += sch.getX(n, i) * slist.getLserver().get(i).getBandAvgwidth();
+			q += sch.getX(n, i) * slist.getLserver().get(i).getBandAvgwidth(buffer.getdownloadDurWithBlock(this, n));
 		}
 		for(int j = 0;j<serverSize;j++)
 		{
@@ -126,6 +126,30 @@ public class Block {
 		ret = p/q;
 
 		return ret;
+	}
+	
+	public int getNewRate() {
+		int pRate = rate;
+		
+		int kP = 5, kD = 5;
+		int k = bList.indexOf(this);
+		
+		double BufferLength = buffer.getBlockEndBufferLength(bList.indexOf(this));
+		if(BufferLength<qmax && BufferLength>qmin)
+			return pRate;
+		else
+		{
+			double []vk = new double[fragNum];
+			int q0 = 0;
+			for(int i=0;i<fragNum;i++)
+			{
+				vk[i] = ((1/playtime*getalphan(i)) * kP * (BufferLength - q0))
+						+ 
+						((1/playtime*getalphan(i)) * kD * ((buffer.getBufferLengthWithBlocknFrag(k, i) - buffer.getBlockStartBufferLength(bList.indexOf(this))) / (getDownloadDur(i))));
+			}
+			//compute max min
+		}
+		return 0;
 	}
 	
 
@@ -225,4 +249,30 @@ public class Block {
 	public void setStartTime(double startTime) {
 		this.startTime = startTime;
 	}
+
+	public List<Block> getbList() {
+		return bList;
+	}
+
+	public void setbList(List<Block> bList) {
+		this.bList = bList;
+	}
+
+	public double getQmax() {
+		return qmax;
+	}
+
+	public void setQmax(double qmax) {
+		this.qmax = qmax;
+	}
+
+	public double getQmin() {
+		return qmin;
+	}
+
+	public void setQmin(double qmin) {
+		this.qmin = qmin;
+	}
+
+
 }

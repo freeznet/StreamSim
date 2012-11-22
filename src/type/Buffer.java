@@ -18,6 +18,45 @@ public class Buffer {
 		this.lengthSec = lengthSec;
 	}
 	
+	public double getdownloadDurWithBlock(Block b)
+	{
+		double ret = 0;
+		
+		for(Block n: bList)
+		{
+			if(n!=b)
+			{
+				ret += n.getDownloadDur(n.getFragNum()-1);
+			}
+			if(n==b)
+				break;
+		}
+		
+		return ret;
+	}
+	
+	public double getdownloadDurWithBlock(Block b, int f)
+	{
+		double ret = 0;
+		int bn = bList.indexOf(b);
+		
+		for(int i=0;i<=bn;i++)
+		{
+			Block k = bList.get(i);
+			if(k!=b)
+			{
+				ret += k.getDownloadDur(k.getFragNum()-1);
+			}
+			else
+			{
+				for(int j=0;j<=f;j++)
+					ret += k.getDownloadDur(j);
+			}
+		}
+		
+		return ret;
+	}
+	
 	public double getBufferLengthWithBlocknFrag(int k, int n)
 	{
 		double ret = getBlockStartBufferLength(k);

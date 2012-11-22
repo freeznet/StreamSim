@@ -27,11 +27,16 @@ public class Main {
 		
 		//init server list
 		double []sbw = {300,900,200,1400,2500};
-		double [][]sbww = {{100,200,300,300,350,280,250,290,310,220},
+		/*double [][]sbww = {{100,200,300,300,350,280,250,290,310,220},
 						   {600,800,900,950,900,880,860,980,790,830},
 						   {90,100,120,130,80,70,100,150,70,90},
 						   {900,1300,1500,1400,1450,1350,1290,1370,1440,1300},
-						   {1600,1900,2400,2450,2590,2610,2700,2500,2600,2510}};
+						   {1600,1900,2400,2450,2590,2610,2700,2500,2600,2510}};*/
+		double [][]sbww = {{1000,1000,1000,1000,1000,1000,1000,1000,1000,1000},
+				{2000,2000,2000,2000,2000,2000,2000,2000,2000,2000},
+				{100,100,100,100,100,100,100,100,100,100},
+				{500,500,500,500,500,500,500,500,500,500},
+				{900,900,900,900,900,900,900,900,900,900}};
 		ServerList slist = new ServerList(sbww);
 		
 		//init Block List
@@ -40,14 +45,27 @@ public class Main {
 		//init buffer
 		Buffer buffer = new Buffer(bList);
 		
+		int nowPlay = 0;
+		int nowRate = 0;
 		
+		Block nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList);
+		nowBlock.setQmax(qmax);
+		nowBlock.setQmin(qmin);
+		bList.add(nowBlock);
+		System.out.println("buffer(Block"+nowPlay+"End) = " + buffer.getBlockEndBufferLength(nowPlay));
+		nowRate = nowBlock.getNewRate();
 		
-		//while(maxPlayBackTime!=buffer.getLengthSec())
+		//maxPlayBackTime -= buffer.getBlockEndBufferLength(nowPlay);
+		while(maxPlayBackTime>buffer.getBlockEndBufferLength(nowPlay))
 		{
-			int startTime = 0;
-			Block nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, 0, bList);
+			//int startTime = 0;
+			nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList);
+			nowBlock.setQmax(qmax);
+			nowBlock.setQmin(qmin);
 			bList.add(nowBlock);
-			System.out.println("buffer(Block1End) = " + buffer.getBlockEndBufferLength(0));
+			nowPlay++;
+			System.out.println("buffer(Block"+nowPlay+"End) = " + buffer.getBlockEndBufferLength(nowPlay));
+			
 		}
 	}
 	
