@@ -77,7 +77,8 @@ public class Server {
 		int i;
 		for(i=0;i<Math.ceil(sec + 0.00000000000000001);i++)
 		{
-			ret += bandwidth[i];
+			//ret += bandwidth[i];
+			ret += bandwidth[0];
 		}
 		ret = ret / i;
 		return ret;
@@ -88,7 +89,8 @@ public class Server {
 	}
 	public double getBandwidth(double sec) {
 		
-		return bandwidth[(int) Math.floor(sec)];
+		//return bandwidth[(int) Math.floor(sec)];
+		return bandwidth[0];
 	}
 	public String getUrl() {
 		return url;
@@ -121,6 +123,23 @@ public class Server {
 		this.q = q;
 	}
 	public double getDownloadSec() {
+		double ret = 0;
+		for(Fragment f:downloadFrag)
+		{
+			ret += f.getDownloadDur();
+		}
+		downloadSec = ret;
+		return downloadSec;
+	}
+	public double getDownloadSec(Fragment n) {
+		double ret = 0;
+		for(Fragment f:downloadFrag)
+		{
+			if(f==n)
+				break;
+			ret += f.getDownloadDur();
+		}
+		downloadSec = ret;
 		return downloadSec;
 	}
 	public void setDownloadSec(double downloadSec) {

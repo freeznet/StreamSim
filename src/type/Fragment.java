@@ -13,21 +13,23 @@ public class Fragment {
 	private double playbackTime;
 	private Block block;
 	private int id = 0;
-	public Fragment(Block b, double br, double pt, int i, Server f){
+	private Buffer buffer;
+	public Fragment(Block b, double br, double pt, int i, Server f, Buffer bf){
 		block = b;
 		bitrate = br;
 		playbackTime = pt;
 		id = i;
 		downloadedBy = f;
-		
-		if(block.isFirstBlock() && id == 0){
+		buffer = bf;
+		/*
+		if(block.isFirstBlock()){
 			downloadStartBufferLength = 0;
 			downloadStartTime = 0;
 		}
-		else if(id==0)
+		else if(!block.isFirstBlock())
 		{
-			//downloadStartTime = 
-		}
+			downloadStartTime = block.
+		}*/
 		
 	};
 	
@@ -70,7 +72,7 @@ public class Fragment {
 			if(next!=null)
 				next.downloadStartTime = downloadEndTime;
 		}
-		//System.out.println("id " + id + " - > downloadStartTime:" + downloadStartTime + " downloadEndTime:" + downloadEndTime);
+		//System.out.println("id " + block.getId() +"/"+id + ":" + downloadedBy.getId()+" - > downloadStartTime:" + downloadStartTime + " downloadEndTime:" + downloadEndTime);
 		return downloadDur;
 	}
 
@@ -80,6 +82,8 @@ public class Fragment {
 
 	public void setDownloadedBy(Server downloadedBy) {
 		this.downloadedBy = downloadedBy;
+		
+		downloadStartTime = downloadedBy.getDownloadSec(this);
 	}
 
 	public double getDownloadStartTime() {

@@ -62,7 +62,7 @@ public class Buffer {
 		double ret = getBlockStartBufferLength(k);
 		ret += (n+1) * bList.get(k).getPlaytime();
 		ret = ret - bList.get(k).getPlaytime() * bList.get(k).getRate() * bList.get(k).getalphan(n);
-		System.out.println("n= " + n + " -> " + bList.get(k).getalphan(n));
+		//System.out.println("n= " + n + " -> " + bList.get(k).getalphan(n));
 		return ret;
 	}
 	
@@ -71,10 +71,8 @@ public class Buffer {
 		double ret = initBufferLength;
 		if(k==0)
 			return ret;
-		for(int i=1;i<=k;i++)
-		{
-			ret += getBlockEndBufferLength(i-1);
-		}
+		
+		ret = getBlockEndBufferLength(k-1);
 		return ret;
 	}
 	
@@ -82,6 +80,8 @@ public class Buffer {
 	{
 		double ret = getBlockStartBufferLength(k);
 		ret += bList.get(k).getFragList().size() * bList.get(k).getPlaytime();
+		//System.out.println("k = "+ k + " full buffer = " + ret);
+		
 		/*double m= 0 ,n= 0 ,o= 0 ,p = 0;
 		for(int j = 0; j<bList.get(k).getServerSize(); j++)
 		{

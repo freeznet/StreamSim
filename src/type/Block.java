@@ -21,6 +21,8 @@ public class Block {
 	private double startTime = 0;
 	private List<Block> bList = null;
 	private double qmax, qmin;
+	private VideoRateList rList;
+	private int id = 0;
 	
 	public Block(Buffer buf, VideoRateList rateList, ServerList s, int max, int selectID,List<Block> st)
 	{
@@ -28,9 +30,11 @@ public class Block {
 		this.slist = s;
 		this.maxLengthBlock = max;
 		this.selectID = selectID;
+		this.rList = rateList;
 		this.rate = rateList.getRateList()[selectID];
 		this.playtime = rateList.getPlaybackTime();
 		this.bList = st;
+		setId(st.size());
 		serverSize = s.getLserver().size();
 		initBlock();
 		System.out.println("fragNum = " +  fragNum + " - - - serverSize = "+ serverSize);
@@ -81,7 +85,7 @@ public class Block {
 	
 	private void initFragment(int id)
 	{
-		Fragment f = new Fragment(this,rate,playtime,id,null);
+		Fragment f = new Fragment(this,rate,playtime,id,null,buffer);
 		fragList.add(f);
 	}
 	
@@ -101,7 +105,7 @@ public class Block {
 				temp += t * m;
 			}
 			ret = fndur * temp;
-			System.out.println("Block download dur ("+n+"/"+(fragNum-1)+") - "+ret + "(" + fndur + "*" + temp +")");
+			//System.out.println("Block download dur ("+n+"/"+(fragNum-1)+") - "+ret + "(" + fndur + "*" + temp +")");
 		}
 		return ret;
 	}
@@ -130,26 +134,58 @@ public class Block {
 	
 	public int getNewRate() {
 		int pRate = rate;
-		
+		int newSelect = 0;
 		int kP = 5, kD = 5;
 		int k = bList.indexOf(this);
 		
 		double BufferLength = buffer.getBlockEndBufferLength(bList.indexOf(this));
 		if(BufferLength<qmax && BufferLength>qmin)
-			return pRate;
+			return selectID;
 		else
 		{
 			double []vk = new double[fragNum];
+			
 			int q0 = 0;
 			for(int i=0;i<fragNum;i++)
 			{
-				vk[i] = ((1/playtime*getalphan(i)) * kP * (BufferLength - q0))
+				double alphaN = getalphan(i);
+				double q_fragtEnk = buffer.getBufferLengthWithBlocknFrag(k, i);
+				double q_blockSk = buffer.getBlockStartBufferLength(bList.indexOf(this));
+				double fragDownDur = getDownloadDur(i);
+				vk[i] = ((1/playtime*alphaN) * kP * (BufferLength - q0))
 						+ 
-						((1/playtime*getalphan(i)) * kD * ((buffer.getBufferLengthWithBlocknFrag(k, i) - buffer.getBlockStartBufferLength(bList.indexOf(this))) / (getDownloadDur(i))));
+						((1/playtime*alphaN) * kD * ((q_fragtEnk - q_blockSk) / (fragDownDur)));
+				System.out.println("===================" + i + "/" + (fragNum-1)+"===================");
+				System.out.println("alphaN = " + alphaN);
+				System.out.println("q_fragtEnk = " + q_fragtEnk);
+				System.out.println("q_blockSk = " + q_blockSk);
+				System.out.println("fragDownDur = " + fragDownDur);
+				System.out.println("vk[i] = " + vk[i]);
 			}
 			//compute max min
+			double vtemp = vk[0];
+			for(int i = 0;i<fragNum;i++)
+			{
+				if(BufferLength<=qmin && vtemp>vk[i])
+				{
+					vtemp = vk[i];
+				}
+				else if(BufferLength>=qmax && vtemp<vk[i])
+				{
+					vtemp = vk[i];
+				}
+			}
+			//compute new rate
+			double newRate = pRate + vtemp;
+			newSelect = rList.getNewRateID(newRate);
+			if(BufferLength<=qmin && newSelect==selectID && newSelect>0)
+				newSelect--;
+			else if(BufferLength>=qmax && newSelect==selectID && newSelect<rList.getLength()-1)
+				newSelect++;
+	
+			System.out.println("New Rate : " + newRate + " ---- newSelect: " + newSelect);
 		}
-		return 0;
+		return newSelect;
 	}
 	
 
@@ -272,6 +308,14 @@ public class Block {
 
 	public void setQmin(double qmin) {
 		this.qmin = qmin;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 

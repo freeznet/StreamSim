@@ -13,6 +13,22 @@ public class VideoRateList {
 		this.rateList = r;
 		this.playbackTime = pt;
 	}
+	
+	public int getNewRateID(double r)//up == false(取下限) else 取上限
+	{
+		int ret = 0;
+		double temp = rateList[0];
+		for(int i=0;i<rateList.length;i++)
+		{
+			if(rateList[i]<=r)
+			{
+				temp = rateList[i];
+				ret = i;
+			}
+		}
+		return ret;
+	}
+	
 	public int getLength() {
 		return length;
 	}

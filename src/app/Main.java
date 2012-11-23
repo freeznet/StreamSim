@@ -19,7 +19,7 @@ public class Main {
 		double playBackTime = 5;
 		double maxPlayBackTime = 1000;
 		double qmin = 5;
-		double qmax = 45;
+		double qmax = 35;
 		
 		//init video list
 		int[] r = {300,700,1500,2500,3500};
@@ -32,11 +32,11 @@ public class Main {
 						   {90,100,120,130,80,70,100,150,70,90},
 						   {900,1300,1500,1400,1450,1350,1290,1370,1440,1300},
 						   {1600,1900,2400,2450,2590,2610,2700,2500,2600,2510}};*/
-		double [][]sbww = {{1000,1000,1000,1000,1000,1000,1000,1000,1000,1000},
-				{2000,2000,2000,2000,2000,2000,2000,2000,2000,2000},
-				{100,100,100,100,100,100,100,100,100,100},
-				{500,500,500,500,500,500,500,500,500,500},
-				{900,900,900,900,900,900,900,900,900,900}};
+		double [][]sbww = {{1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000},
+				{150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150},
+				{100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100},
+				{500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500},
+				{900,900,900,900,900,900,900,900,900,900,900,900,900,900,900,900,900,900,900,900}};
 		ServerList slist = new ServerList(sbww);
 		
 		//init Block List
@@ -52,11 +52,12 @@ public class Main {
 		nowBlock.setQmax(qmax);
 		nowBlock.setQmin(qmin);
 		bList.add(nowBlock);
-		System.out.println("buffer(Block"+nowPlay+"End) = " + buffer.getBlockEndBufferLength(nowPlay));
+		System.out.println("buffer(Block"+nowPlay+"End) = " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " -> " + buffer.getBlockEndBufferLength(nowPlay));
 		nowRate = nowBlock.getNewRate();
 		
 		//maxPlayBackTime -= buffer.getBlockEndBufferLength(nowPlay);
-		while(maxPlayBackTime>buffer.getBlockEndBufferLength(nowPlay))
+		//while(maxPlayBackTime>buffer.getBlockEndBufferLength(nowPlay))
+		for(int i=0;i<11;i++)
 		{
 			//int startTime = 0;
 			nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList);
@@ -64,8 +65,8 @@ public class Main {
 			nowBlock.setQmin(qmin);
 			bList.add(nowBlock);
 			nowPlay++;
-			System.out.println("buffer(Block"+nowPlay+"End) = " + buffer.getBlockEndBufferLength(nowPlay));
-			
+			System.out.println("buffer(Block"+nowPlay+"End) = " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " -> " + buffer.getBlockEndBufferLength(nowPlay));
+			nowRate = nowBlock.getNewRate();
 		}
 	}
 	
