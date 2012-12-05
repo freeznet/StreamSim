@@ -48,7 +48,7 @@ public class Schedule {
 				lserver.get(jstar).assignFragment(f);
 			}
 		}
-		printX();
+		//printX();
 		return x;
 	}
 	

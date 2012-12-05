@@ -2,26 +2,19 @@ package app;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import type.Block;
+import type.Buffer;
+import type.ServerList;
+import type.VideoRateList;
 
-import type.*;
+public class MainMaxBW {
 
-public class Main {
-
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		DecimalFormat dcmFmt = new DecimalFormat("0.00");
@@ -53,22 +46,20 @@ public class Main {
 		//init Block List
 		List<Block> bList = new ArrayList<Block>();
 		
-		Timeline tline = new Timeline(slist.bwLength);
-		
 		//init buffer
 		Buffer buffer = new Buffer(bList);
 		
 		int nowPlay = 0;
 		int nowRate = 0;
-		double timedownloadDur = 0;
-		Block nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList, tline);
+		
+		Block nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList, null);
 		nowBlock.setQmax(qmax);
 		nowBlock.setQmin(qmin);
+		nowBlock.setServerSize(1);
 		bList.add(nowBlock);
-		nowBlock.init();
+		nowBlock.initBW();
 		//System.out.println("buffer(Block"+nowPlay+"End) = " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " -> " + buffer.getBlockEndBufferLength(nowPlay));
 		System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
-		timedownloadDur += nowBlock.getDownloadDur(nowBlock.getFragNum()-1);
 		nowRate = nowBlock.getNewRate();
 		
 		//maxPlayBackTime -= buffer.getBlockEndBufferLength(nowPlay);
@@ -76,20 +67,17 @@ public class Main {
 		//for(int i=0;i<10;i++)
 		{
 			//int startTime = 0;
-			nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList, tline);
+			nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList, null);
 			nowBlock.setQmax(qmax);
 			nowBlock.setQmin(qmin);
+			nowBlock.setServerSize(1);
 			bList.add(nowBlock);
-			nowBlock.init();
+			nowBlock.initBW();
 			nowPlay++;
 			//System.out.println("buffer(Block"+nowPlay+"End) = " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " -> " + buffer.getBlockEndBufferLength(nowPlay));
 			System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
-			timedownloadDur += nowBlock.getDownloadDur(nowBlock.getFragNum()-1);
 			nowRate = nowBlock.getNewRate();
 		}
-		
-		System.out.println("timedownloadDur = " + timedownloadDur);
-		tline.print();
 	}
 	
 	public static double [][] loadBandwidth()

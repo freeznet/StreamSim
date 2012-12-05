@@ -6,20 +6,22 @@ import java.util.List;
 
 public class ServerList {
 	List<Server> lserver = new ArrayList<Server>();
+	public int bwLength = 0;
 	public ServerList(double [][] s)
 	{
 		int l = s.length;
+		bwLength = s[0].length;
 		for(int i=0;i<l;i++)
 		{
 			lserver.add(new Server(i+1,"",s[i]));
 		}
 		ServerCompartor sc = new ServerCompartor();
 		Collections.sort(lserver,sc);
-		System.out.println("Server list inited done!");
+		//System.out.println("Server list inited done!");
 		for(int i=0;i<lserver.size();i++)
 		{
 			Server ser = lserver.get(i);
-			System.out.println(i + ":" + ser.getId() + " - - - " + ser.getBandAvgwidth());
+			//System.out.println(i + ":" + ser.getId() + " - - - " + ser.getBandAvgwidth());
 		}
 	}
 	public List<Server> getLserver() {

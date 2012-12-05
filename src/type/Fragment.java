@@ -14,13 +14,16 @@ public class Fragment {
 	private Block block;
 	private int id = 0;
 	private Buffer buffer;
-	public Fragment(Block b, double br, double pt, int i, Server f, Buffer bf){
+	private boolean done = false;
+	private Timeline tline;
+	public Fragment(Block b, double br, double pt, int i, Server f, Buffer bf, Timeline line){
 		block = b;
 		bitrate = br;
 		playbackTime = pt;
 		id = i;
 		downloadedBy = f;
 		buffer = bf;
+		tline = line;
 		/*
 		if(block.isFirstBlock()){
 			downloadStartBufferLength = 0;
@@ -35,7 +38,8 @@ public class Fragment {
 	
 	public double getDownloadDur()
 	{
-		double ret = 0;
+		if(done==true)
+			return downloadDur;
 		
 		double fileSize = playbackTime * bitrate;
 		double time = downloadStartTime;
@@ -54,11 +58,13 @@ public class Fragment {
 			if(fileSize - downloadSize>=0){
 				downloadTempDur = Math.ceil(time+0.0000000001) - time;
 				fileSize -= downloadSize;
+				tline.setBufferSize((int) Math.floor(time), downloadSize/bitrate);
 			}
 			else
 			{
 				//double s = fileSize;
 				downloadTempDur = fileSize / bw;
+				tline.setBufferSize((int) Math.floor(time), fileSize/bitrate);
 				fileSize = 0;
 			}
 			time += downloadTempDur;
@@ -72,6 +78,7 @@ public class Fragment {
 			if(next!=null)
 				next.downloadStartTime = downloadEndTime;
 		}
+		done=true;
 		//System.out.println("id " + block.getId() +"/"+id + ":" + downloadedBy.getId()+" - > downloadStartTime:" + downloadStartTime + " downloadEndTime:" + downloadEndTime);
 		return downloadDur;
 	}
@@ -82,8 +89,20 @@ public class Fragment {
 
 	public void setDownloadedBy(Server downloadedBy) {
 		this.downloadedBy = downloadedBy;
+		if(downloadedBy.isFirstFragDownloadinBlock(this, block))
+		{
+			int blockIndex = block.getbList().indexOf(block);
+			if(blockIndex>0)
+			{
+				Block lastBlock = block.getbList().get(blockIndex - 1);
+				Fragment f = lastBlock.getFragList().get(lastBlock.getFragList().size()-1);
+				downloadStartTime = f.downloadEndTime;
+			}
+			
+		}
+		//else
+		//	downloadStartTime = downloadedBy.getDownloadSec(this);
 		
-		downloadStartTime = downloadedBy.getDownloadSec(this);
 	}
 
 	public double getDownloadStartTime() {

@@ -14,12 +14,31 @@ public class Server {
 	private int numOfFragReq = 0;
 	private double downloadSec = 0;
 	private List<Fragment> downloadFrag = new ArrayList<Fragment>();
+	private List<Double> haltTime = new ArrayList<Double>();
 	
 	public Server(int id, String url, double[] bandwidth)
 	{
 		this.id = id;
 		this.url = url;
 		this.bandwidth = bandwidth;
+	}
+	
+	public boolean isFirstFragDownloadinBlock(Fragment f, Block b)
+	{
+		int cnt = 0;
+		for(Fragment i:b.getFragList())
+		{
+			if(i.getDownloadedBy()==this)
+			{
+				cnt++;
+				if(i == f)
+					break;
+			}
+		}
+		if(cnt==1)
+			return true;
+		else
+			return false;
 	}
 	
 	public Fragment getNextFragment(Fragment f, Block b)
@@ -77,8 +96,8 @@ public class Server {
 		int i;
 		for(i=0;i<Math.ceil(sec + 0.00000000000000001);i++)
 		{
-			//ret += bandwidth[i];
-			ret += bandwidth[0];
+			ret += bandwidth[i];
+			//ret += bandwidth[0];
 		}
 		ret = ret / i;
 		return ret;
@@ -88,9 +107,9 @@ public class Server {
 		return bandwidth[sec];
 	}
 	public double getBandwidth(double sec) {
-		
-		//return bandwidth[(int) Math.floor(sec)];
-		return bandwidth[0];
+		//System.out.println(sec + "---" +bandwidth[(int) Math.floor(sec)]);
+		return bandwidth[(int) Math.floor(sec)];
+		//return bandwidth[0];
 	}
 	public String getUrl() {
 		return url;
