@@ -158,7 +158,7 @@ public class Block {
 	public int getNewRate() {
 		int pRate = rate;
 		int newSelect = 0;
-		double kP = 0.02, kD = 2;
+		double kP = 0.002, kD = 2;
 		int k = bList.indexOf(this);
 		
 		double BufferLength = buffer.getBlockEndBufferLength(bList.indexOf(this));
@@ -168,7 +168,13 @@ public class Block {
 		{
 			double []vk = new double[fragNum];
 			
-			int q0 = 0;
+			double q0 = 0;//
+			
+			/*if(BufferLength<=qmin)
+				q0 = qmin;
+			else if(BufferLength>=qmax)
+				q0 = qmax;
+			*/
 			for(int i=0;i<fragNum;i++)
 			{
 				double alphaN = getalphan(i);

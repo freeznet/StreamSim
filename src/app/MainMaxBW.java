@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 import type.Block;
 import type.Buffer;
 import type.ServerList;
+import type.Timeline;
 import type.VideoRateList;
 
 public class MainMaxBW {
@@ -46,13 +47,14 @@ public class MainMaxBW {
 		//init Block List
 		List<Block> bList = new ArrayList<Block>();
 		
+		Timeline tline = new Timeline(slist.bwLength, 1);
 		//init buffer
 		Buffer buffer = new Buffer(bList);
 		
 		int nowPlay = 0;
 		int nowRate = 0;
 		
-		Block nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList, null);
+		Block nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList, tline);
 		nowBlock.setQmax(qmax);
 		nowBlock.setQmin(qmin);
 		nowBlock.setServerSize(1);
@@ -67,7 +69,7 @@ public class MainMaxBW {
 		//for(int i=0;i<10;i++)
 		{
 			//int startTime = 0;
-			nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList, null);
+			nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList, tline);
 			nowBlock.setQmax(qmax);
 			nowBlock.setQmin(qmin);
 			nowBlock.setServerSize(1);

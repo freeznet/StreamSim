@@ -59,12 +59,14 @@ public class Fragment {
 				downloadTempDur = Math.ceil(time+0.0000000001) - time;
 				fileSize -= downloadSize;
 				tline.setBufferSize((int) Math.floor(time), downloadSize/bitrate);
+				tline.setServerBufferSize(downloadedBy.getId()-1, (int) Math.floor(time), downloadSize/bitrate);
 			}
 			else
 			{
 				//double s = fileSize;
 				downloadTempDur = fileSize / bw;
 				tline.setBufferSize((int) Math.floor(time), fileSize/bitrate);
+				tline.setServerBufferSize(downloadedBy.getId()-1, (int) Math.floor(time), fileSize/bitrate);
 				fileSize = 0;
 			}
 			time += downloadTempDur;
