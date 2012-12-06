@@ -137,7 +137,7 @@ public class Block {
 		double ret = 0;
 		double p = 0;
 		double q = 0;
-		for(int i=0;i<getServerSize();i++)
+		for(int i=0;i<serverSize;i++)
 		{
 			//q += sch.getX(n, i) * slist.getLserver().get(i).getBandAvgwidth(buffer.getdownloadDurWithBlock(this, n));
 			q += sch.getX(n, i) * slist.getLserver().get(i).getBandAvgwidth(fragList.get(n).getDownloadEndTime());
@@ -157,8 +157,16 @@ public class Block {
 	
 	public int getNewRate() {
 		int pRate = rate;
+		if(serverSize == 1)
+		{
+			pRate = 0;
+			for(int i = 0;i<slist.getLserver().size();i++)
+				pRate += slist.getLserver().get(i).getBandAvgwidth(getDownloadEndTime());
+			pRate /= slist.getLserver().size();
+		}
 		int newSelect = 0;
-		double kP = 0.002, kD = 2;
+		//double kP = 0.002, kD = 2;
+		double kP = 0.3, kD = 0.03;
 		int k = bList.indexOf(this);
 		
 		double BufferLength = buffer.getBlockEndBufferLength(bList.indexOf(this));
@@ -170,11 +178,11 @@ public class Block {
 			
 			double q0 = 0;//
 			
-			/*if(BufferLength<=qmin)
+			if(Math.floor(BufferLength)<=qmin)
 				q0 = qmin;
-			else if(BufferLength>=qmax)
+			else if(Math.floor(BufferLength)>=qmax)
 				q0 = qmax;
-			*/
+			
 			for(int i=0;i<fragNum;i++)
 			{
 				double alphaN = getalphan(i);
@@ -184,7 +192,9 @@ public class Block {
 				vk[i] = ((1/(playtime*alphaN)) * kP * (BufferLength - q0))
 						+ 
 						((1/(playtime*alphaN)) * kD * ((q_fragtEnk - q_blockSk) / (fragDownDur)));
+				//System.out.println("alphaN = " + alphaN);
 				/*System.out.println("===================" + i + "/" + (fragNum-1)+"===================");
+				System.out.println("q0 = " + q0);
 				System.out.println("alphaN = " + alphaN);
 				System.out.println("BufferLength = " + BufferLength);
 				System.out.println("q_fragtEnk = " + q_fragtEnk);
@@ -207,15 +217,36 @@ public class Block {
 			}
 			//compute new rate
 			double newRate = pRate + vtemp;
+			
 			newSelect = rList.getNewRateID(newRate);
+			
+			//System.out.println("newRate = " + newRate + " ,newSelect = " + newSelect + " ,selectID = " + selectID);
+			
+			if(Math.floor(BufferLength)<=qmin && newSelect>selectID)
+				newSelect = selectID;
+			else if(Math.floor(BufferLength)>=qmax && newSelect<selectID)
+				newSelect = selectID;
+			
+			//System.out.println("newSelect = " + newSelect + "selectID + " + selectID);
+			
+			/*
 			if(Math.floor(BufferLength)<=qmin && newSelect==selectID && newSelect>0)
+			{
 				newSelect--;
+			}
 			else if(Math.floor(BufferLength)>=qmax && newSelect==selectID && newSelect<rList.getLength()-1)
+			{
 				newSelect++;
+			}*/
 	
 			//System.out.println("New Rate : " + newRate + " ---- newSelect: " + newSelect);
 		}
 		return newSelect;
+	}
+	
+	public double getDownloadEndTime()
+	{
+		return fragList.get(fragNum-1).getDownloadEndTime();
 	}
 	
 

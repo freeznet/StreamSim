@@ -28,11 +28,11 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		DecimalFormat dcmFmt = new DecimalFormat("0.00");
-		int tatolFragNum = 100;
+		int tatolFragNum = 0;
 		int maxLengthBlock = 10;
 		double playBackTime = 5;
 		double maxPlayBackTime = 1000;
-		double qmin = 15;
+		double qmin = 10;
 		double qmax = 50;
 		
 		JavaPlot p = new JavaPlot("E:\\workspace\\gnuplot\\bin\\pgnuplot.exe");
@@ -79,8 +79,9 @@ public class Main {
 		bList.add(nowBlock);
 		nowBlock.init();
 		//System.out.println("buffer(Block"+nowPlay+"End) = " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " -> " + buffer.getBlockEndBufferLength(nowPlay));
-		System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
+		//System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
 		timedownloadDur += nowBlock.getDownloadDur(nowBlock.getFragNum()-1);
+		tatolFragNum += nowBlock.getFragNum();
 		nowRate = nowBlock.getNewRate();
 		
 		//maxPlayBackTime -= buffer.getBlockEndBufferLength(nowPlay);
@@ -88,6 +89,7 @@ public class Main {
 		//for(int i=0;i<10;i++)
 		{
 			//int startTime = 0;
+			slist.resort((int)Math.floor(nowBlock.getDownloadEndTime()));
 			nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList, tline);
 			nowBlock.setQmax(qmax);
 			nowBlock.setQmin(qmin);
@@ -95,13 +97,15 @@ public class Main {
 			nowBlock.init();
 			nowPlay++;
 			//System.out.println("buffer(Block"+nowPlay+"End) = " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " -> " + buffer.getBlockEndBufferLength(nowPlay));
-			System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
+			//System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
 			timedownloadDur += nowBlock.getDownloadDur(nowBlock.getFragNum()-1);
 			nowRate = nowBlock.getNewRate();
+			
+			tatolFragNum += nowBlock.getFragNum();
 		}
 		
-		System.out.println("===================================");
-		tline.printServerAll();
+		System.out.println("tatolFragNum = " + tatolFragNum);
+		//tline.printServerAll();
 	}
 	
 	public static double [][] loadBandwidth()

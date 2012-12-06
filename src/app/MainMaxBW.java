@@ -47,7 +47,7 @@ public class MainMaxBW {
 		//init Block List
 		List<Block> bList = new ArrayList<Block>();
 		
-		Timeline tline = new Timeline(slist.bwLength, 1);
+		Timeline tline = new Timeline(slist.bwLength, slist.getLserver().size());
 		//init buffer
 		Buffer buffer = new Buffer(bList);
 		
@@ -61,7 +61,7 @@ public class MainMaxBW {
 		bList.add(nowBlock);
 		nowBlock.initBW();
 		//System.out.println("buffer(Block"+nowPlay+"End) = " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " -> " + buffer.getBlockEndBufferLength(nowPlay));
-		System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
+		//System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
 		nowRate = nowBlock.getNewRate();
 		
 		//maxPlayBackTime -= buffer.getBlockEndBufferLength(nowPlay);
@@ -69,6 +69,7 @@ public class MainMaxBW {
 		//for(int i=0;i<10;i++)
 		{
 			//int startTime = 0;
+			slist.resort((int)Math.floor(nowBlock.getDownloadEndTime()));
 			nowBlock = new Block(buffer,rateList,slist,maxLengthBlock, nowRate, bList, tline);
 			nowBlock.setQmax(qmax);
 			nowBlock.setQmin(qmin);
@@ -77,7 +78,7 @@ public class MainMaxBW {
 			nowBlock.initBW();
 			nowPlay++;
 			//System.out.println("buffer(Block"+nowPlay+"End) = " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " -> " + buffer.getBlockEndBufferLength(nowPlay));
-			System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
+			//System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
 			nowRate = nowBlock.getNewRate();
 		}
 	}
@@ -96,10 +97,10 @@ public class MainMaxBW {
 			while(line!=null)
 			{
 				tokenizer = new StringTokenizer(line);
-				ret[0][cnt] = Double.parseDouble(tokenizer.nextToken());
-				ret[1][cnt] = Double.parseDouble(tokenizer.nextToken());
-				ret[2][cnt] = Double.parseDouble(tokenizer.nextToken());
-				ret[3][cnt] = Double.parseDouble(tokenizer.nextToken());
+				ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) *4;
+				ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) *4;
+				ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) *4;
+				ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) *4;
 				line = inFile.readLine();
 				cnt++;
 			}
@@ -114,7 +115,8 @@ public class MainMaxBW {
 			System.out.println(ret[1][i]);
 			System.out.println(ret[2][i]);
 			System.out.println(ret[3][i]);
-		}*/
+		}
+		*/
 		return ret;
 	}
 	

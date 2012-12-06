@@ -15,20 +15,26 @@ public class ServerList {
 		{
 			lserver.add(new Server(i+1,"",s[i]));
 		}
-		ServerCompartor sc = new ServerCompartor();
+		ServerCompartor sc = new ServerCompartor(0);
 		Collections.sort(lserver,sc);
 		//System.out.println("Server list inited done!");
-		for(int i=0;i<lserver.size();i++)
+		/*for(int i=0;i<lserver.size();i++)
 		{
 			Server ser = lserver.get(i);
-			//System.out.println(i + ":" + ser.getId() + " - - - " + ser.getBandAvgwidth());
-		}
+			System.out.println(i + ":" + ser.getId() + " - - - " + ser.getBandAvgwidth(0));
+		}*/
 	}
 	public List<Server> getLserver() {
 		return lserver;
 	}
 	public void setLserver(List<Server> lserver) {
 		this.lserver = lserver;
+	}
+	
+	public void resort(int t)
+	{
+		ServerCompartor sc = new ServerCompartor(t);
+		Collections.sort(lserver,sc);
 	}
 	
 }

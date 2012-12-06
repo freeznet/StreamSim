@@ -1,20 +1,25 @@
-package type;
+package fragOnly;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import fragOnly.Fragment;
+
 public class Server {
+
 	private int id = 0;
 	private double[] bandwidth;
 	private String url = "";
-	private Block nowBlock = null;
 	private Queue<String> q = new LinkedList<String>();
 	private int numOfFragReq = 0;
 	private double downloadSec = 0;
 	private List<Fragment> downloadFrag = new ArrayList<Fragment>();
 	private List<Double> haltTime = new ArrayList<Double>();
+	private boolean isAvailable = true;
+	
+	private double nextAvailableTime = 0;
 	
 	public Server(int id, String url, double[] bandwidth)
 	{
@@ -23,25 +28,7 @@ public class Server {
 		this.bandwidth = bandwidth;
 	}
 	
-	public boolean isFirstFragDownloadinBlock(Fragment f, Block b)
-	{
-		int cnt = 0;
-		for(Fragment i:b.getFragList())
-		{
-			if(i.getDownloadedBy()==this)
-			{
-				cnt++;
-				if(i == f)
-					break;
-			}
-		}
-		if(cnt==1)
-			return true;
-		else
-			return false;
-	}
-	
-	public Fragment getNextFragment(Fragment f, Block b)
+	public Fragment getNextFragment(Fragment f)
 	{
 		Fragment r = null;
 		for(Fragment i:downloadFrag)
@@ -51,14 +38,18 @@ public class Server {
 				int no = downloadFrag.indexOf(f);
 				if(downloadFrag.indexOf(f) < downloadFrag.size()-1){
 					r = downloadFrag.get(no+1);
-					if(r.getBlock() == b)
-						break;
-					else
-						r = null;
+					break;
 				}
 			}
 		}
 		return r;
+	}
+	
+	public Fragment getLastFragment()
+	{
+		if(downloadFrag.size()>=1)
+			return downloadFrag.get(downloadFrag.size()-1);
+		return null;
 	}
 	
 	public void assignFragment(Fragment f)
@@ -115,9 +106,7 @@ public class Server {
 	public String getUrl() {
 		return url;
 	}
-	public Block getNowBlock() {
-		return nowBlock;
-	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -127,9 +116,7 @@ public class Server {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public void setNowBlock(Block nowBlock) {
-		this.nowBlock = nowBlock;
-	}
+
 	public int getNumOfFragReq() {
 		return numOfFragReq;
 	}
@@ -174,5 +161,21 @@ public class Server {
 	public void setDownloadFrag(List<Fragment> downloadFrag) {
 		this.downloadFrag = downloadFrag;
 	}
-	
+
+	public boolean isAvailable() {
+		return isAvailable;
+	}
+
+	public void setAvailable(boolean isAvailable) {
+		this.isAvailable = isAvailable;
+	}
+
+	public double getNextAvailableTime() {
+		return nextAvailableTime;
+	}
+
+	public void setNextAvailableTime(double nextAvailableTime) {
+		this.nextAvailableTime = nextAvailableTime;
+	}
+
 }
