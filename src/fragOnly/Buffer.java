@@ -10,8 +10,12 @@ public class Buffer {
 	private double downloadDur = 0;
 	List<Fragment> bList = null;
 	private double initBufferLength = 0;
-	public Buffer(List<Fragment> b){
+	private ServerList sList = null;
+	private BitRateHistory brHistory = null;
+	public Buffer(List<Fragment> b, ServerList sList, BitRateHistory brH){
 		this.bList = b;
+		this.sList = sList;
+		this.brHistory = brH;
 	};
 	public double getLengthSec() {
 		return lengthSec;
@@ -103,6 +107,58 @@ public class Buffer {
 		}
 		ret += (fragment.getPlaytime() - fragment.getDownloadDur());
 		return ret;
+	}
+	
+	public double getBufferLengthWithTime(Fragment fragment) {
+		double ret = 0;
+		double endTime = fragment.getDownloadEndTime();
+		int intTime = (int) Math.floor(endTime);
+		double doubleTime = endTime - intTime;
+		
+		//System.out.println("endTime = " + endTime + ",intTime = " + intTime + ", doubleTime = " + doubleTime + ",brHistory.getChangeRate(i) = " + brHistory.getChangeRate(0) );
+		
+		for(int i=1;i<=intTime;i++)
+		{
+			for(Server s:sList.getLserver())
+			{
+				//System.out.println("i = " + i + " -> " + s.getBandwidth(i) / brHistory.getChangeRate(i));
+				ret += (s.getBandwidth(i) / brHistory.getChangeRate(i));
+			}
+		}
+		
+		for(Server s:sList.getLserver())
+		{
+			//System.out.println("doubleTime = " + doubleTime + " -> " + s.getBandwidth(intTime) * doubleTime / brHistory.getChangeRate(intTime));
+			ret += (s.getBandwidth(intTime) * doubleTime / brHistory.getChangeRate(intTime));
+		}
+		
+		return ret - endTime;
+	}
+	
+	public double getBufferLengthWithTime(double time) {
+		double ret = 0;
+		double endTime = time;
+		int intTime = (int) Math.floor(endTime);
+		double doubleTime = endTime - intTime;
+		
+		//System.out.println("endTime = " + endTime + ",intTime = " + intTime + ", doubleTime = " + doubleTime + ",brHistory.getChangeRate(i) = " + brHistory.getChangeRate(0) );
+		
+		for(int i=1;i<=intTime;i++)
+		{
+			for(Server s:sList.getLserver())
+			{
+				//System.out.println("i = " + i + "/" + brHistory.getChangeRate(i) + " -> " + s.getBandwidth(i) / brHistory.getChangeRate(i));
+				ret += (s.getBandwidth(i) / brHistory.getChangeRate(i));
+			}
+		}
+		
+		for(Server s:sList.getLserver())
+		{
+			//System.out.println("doubleTime = " + doubleTime + " -> " + s.getBandwidth(intTime) * doubleTime / brHistory.getChangeRate(intTime));
+			ret += (s.getBandwidth(intTime) * doubleTime / brHistory.getChangeRate(intTime));
+		}
+		
+		return ret - endTime;
 	}
 
 }

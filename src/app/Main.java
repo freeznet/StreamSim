@@ -29,10 +29,10 @@ public class Main {
 		// TODO Auto-generated method stub
 		DecimalFormat dcmFmt = new DecimalFormat("0.00");
 		int tatolFragNum = 0;
-		int maxLengthBlock = 10;
+		int maxLengthBlock = 8;
 		double playBackTime = 5;
 		double maxPlayBackTime = 1000;
-		double qmin = 10;
+		double qmin = 15;
 		double qmax = 50;
 		
 		JavaPlot p = new JavaPlot("E:\\workspace\\gnuplot\\bin\\pgnuplot.exe");
@@ -85,7 +85,7 @@ public class Main {
 		nowRate = nowBlock.getNewRate();
 		
 		//maxPlayBackTime -= buffer.getBlockEndBufferLength(nowPlay);
-		while(bList.size()<50)
+		while(bList.size()<100)
 		//for(int i=0;i<10;i++)
 		{
 			//int startTime = 0;
@@ -104,7 +104,7 @@ public class Main {
 			tatolFragNum += nowBlock.getFragNum();
 		}
 		
-		System.out.println("tatolFragNum = " + tatolFragNum);
+		//System.out.println("tatolFragNum = " + tatolFragNum);
 		//tline.printServerAll();
 	}
 	
@@ -122,10 +122,10 @@ public class Main {
 			while(line!=null)
 			{
 				tokenizer = new StringTokenizer(line);
-				ret[0][cnt] = Double.parseDouble(tokenizer.nextToken());
-				ret[1][cnt] = Double.parseDouble(tokenizer.nextToken());
-				ret[2][cnt] = Double.parseDouble(tokenizer.nextToken());
-				ret[3][cnt] = Double.parseDouble(tokenizer.nextToken());
+				ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 3;
+				ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2;
+				ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 3;
+				ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2;
 				line = inFile.readLine();
 				cnt++;
 			}

@@ -83,6 +83,8 @@ public class Fragment {
 		done=true;
 		//System.out.println("id " + block.getId() +"/"+id + ":" + downloadedBy.getId()+" - > downloadStartTime:" + downloadStartTime + " downloadEndTime:" + downloadEndTime);
 		System.out.println(downloadedBy.getId() + " " + block.getId()+" "+ id + " " +"0 " + downloadEndTime + " " + bitrate + " " + buffer.getBufferLengthWithBlocknFrag(block, this));
+		//System.out.println(downloadedBy.getId() + " " + block.getId()+" "+ id + " " +"0 " + downloadStartTime + " " + bitrate + " " + buffer.getBufferLengthWithBlocknFrag(block, this));
+
 		return downloadDur;
 	}
 

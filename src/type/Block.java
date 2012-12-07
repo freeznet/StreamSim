@@ -24,6 +24,7 @@ public class Block {
 	private VideoRateList rList;
 	private int id = 0;
 	private Timeline tline;
+	private boolean triRateChange = false;
 	
 	public Block(Buffer buf, VideoRateList rateList, ServerList s, int max, int selectID,List<Block> st, Timeline tl)
 	{
@@ -157,20 +158,23 @@ public class Block {
 	
 	public int getNewRate() {
 		int pRate = rate;
-		if(serverSize == 1)
+		/*if(serverSize == 1)
 		{
 			pRate = 0;
 			for(int i = 0;i<slist.getLserver().size();i++)
 				pRate += slist.getLserver().get(i).getBandAvgwidth(getDownloadEndTime());
 			pRate /= slist.getLserver().size();
-		}
+		}*/
 		int newSelect = 0;
 		//double kP = 0.002, kD = 2;
-		double kP = 0.3, kD = 0.03;
+		double kP = 0.5, kD = 0.8;
 		int k = bList.indexOf(this);
 		
 		double BufferLength = buffer.getBlockEndBufferLength(bList.indexOf(this));
-		if(Math.floor(BufferLength)<qmax && Math.floor(BufferLength)>qmin)
+		Block lastBlock = null;
+		if(k>0)
+			lastBlock = bList.get(k-1);
+		if((Math.floor(BufferLength)<qmax && Math.floor(BufferLength)>qmin) || this.id<1)
 			return selectID;
 		else
 		{
@@ -192,6 +196,7 @@ public class Block {
 				vk[i] = ((1/(playtime*alphaN)) * kP * (BufferLength - q0))
 						+ 
 						((1/(playtime*alphaN)) * kD * ((q_fragtEnk - q_blockSk) / (fragDownDur)));
+				//System.out.println("vk["+i+"] = " + vk[i]);
 				//System.out.println("alphaN = " + alphaN);
 				/*System.out.println("===================" + i + "/" + (fragNum-1)+"===================");
 				System.out.println("q0 = " + q0);
@@ -200,7 +205,7 @@ public class Block {
 				System.out.println("q_fragtEnk = " + q_fragtEnk);
 				System.out.println("q_blockSk = " + q_blockSk);
 				System.out.println("fragDownDur = " + fragDownDur);
-				System.out.println("vk["+i+"] = " + vk[i]);*/
+				*/
 			}
 			//compute max min
 			double vtemp = vk[0];
@@ -222,12 +227,24 @@ public class Block {
 			
 			//System.out.println("newRate = " + newRate + " ,newSelect = " + newSelect + " ,selectID = " + selectID);
 			
+			
+			/*if(lastBlock != null && lastBlock.isTriRateChange())
+			{
+				if(Math.floor(BufferLength)<=qmin && newSelect==selectID && newSelect>0)
+					newSelect--;
+				else if(Math.floor(BufferLength)>=qmax && newSelect==selectID && newSelect<rList.getLength()-1)
+					newSelect++;
+			}*/
 			if(Math.floor(BufferLength)<=qmin && newSelect>selectID)
 				newSelect = selectID;
 			else if(Math.floor(BufferLength)>=qmax && newSelect<selectID)
 				newSelect = selectID;
+			else if(newSelect==selectID)
+				this.triRateChange = true;
 			
-			//System.out.println("newSelect = " + newSelect + "selectID + " + selectID);
+			
+			
+			//System.out.println("newSelect = " + newSelect + "selectID + " + selectID + ", this.triRateChange = "  + this.triRateChange);
 			
 			/*
 			if(Math.floor(BufferLength)<=qmin && newSelect==selectID && newSelect>0)
@@ -377,6 +394,14 @@ public class Block {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public boolean isTriRateChange() {
+		return triRateChange;
+	}
+
+	public void setTriRateChange(boolean triRateChange) {
+		this.triRateChange = triRateChange;
 	}
 
 

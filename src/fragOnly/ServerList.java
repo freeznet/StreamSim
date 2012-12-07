@@ -46,6 +46,10 @@ public class ServerList {
 		}
 		return avaServer;
 	}
+	public List<Server> getDoneServer(int time) {
+		List<Server> ret = new ArrayList<Server>();
+		return null;
+	}
 	
 	
 
