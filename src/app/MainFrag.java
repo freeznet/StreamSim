@@ -75,7 +75,7 @@ public class MainFrag {
 			nowFrag.getDownloadDur();
 		}
 		
-		while(fragCnt<100)
+		while(fragCnt<1500)
 		{
 			//System.out.println(time);
 			Fragment justDone = getJustDoneFrag(time,fragList);
@@ -84,8 +84,8 @@ public class MainFrag {
 				bufferLength += justDone.getPlaytime() - justDone.getDownloadDur();
 				justDone.setDownloadEndBufferLength(bufferLength);
 				Server s = justDone.getDownloadedBy();
-				System.out.println(s.getId() + " " + "0 0"+" "+justDone.getId() + " " + justDone.getDownloadStartTime() + " " + justDone.getDownloadEndTime() + " " + justDone.getBitrate() + " " + bufferLength);
-				
+				System.out.println(s.getId() + " " + "0 0"+" "+justDone.getId() + " " + justDone.getDownloadStartTime() + " " + justDone.getBitrate() + " " + bufferLength);
+				//System.out.println(s.getId() + " " + "0 0"+" "+justDone.getId() + " " +"0 " + downloadEndTime + " " + bitrate + " " + buffer.getBufferLengthWithBlocknFrag(block, this));
 				int newRate = justDone.getNewRate();
 				if(newRate!=nowRate)
 				{

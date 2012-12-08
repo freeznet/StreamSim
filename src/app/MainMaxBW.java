@@ -26,6 +26,9 @@ public class MainMaxBW {
 		double qmin = 15;
 		double qmax = 50;
 		
+		double maxBufferLength = 0;
+		double minBufferLength = 99999;
+		
 		//init video list
 		int[] r = {300,700,1500,2500,3500};
 		VideoRateList rateList = new VideoRateList(5,r,playBackTime);
@@ -62,10 +65,12 @@ public class MainMaxBW {
 		nowBlock.initBW();
 		//System.out.println("buffer(Block"+nowPlay+"End) = " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " -> " + buffer.getBlockEndBufferLength(nowPlay));
 		//System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
+		maxBufferLength = buffer.getBlockEndBufferLength(nowPlay);
+		minBufferLength = buffer.getBlockEndBufferLength(nowPlay);
 		nowRate = nowBlock.getNewRate();
 		
 		//maxPlayBackTime -= buffer.getBlockEndBufferLength(nowPlay);
-		while(bList.size()<68)
+		while(bList.size()<370)
 		//for(int i=0;i<10;i++)
 		{
 			//int startTime = 0;
@@ -76,11 +81,19 @@ public class MainMaxBW {
 			nowBlock.setServerSize(1);
 			bList.add(nowBlock);
 			nowBlock.initBW();
+			if(buffer.getBlockEndBufferLength(nowPlay) > maxBufferLength)
+				maxBufferLength = buffer.getBlockEndBufferLength(nowPlay);
+			if(buffer.getBlockEndBufferLength(nowPlay) < minBufferLength)
+				minBufferLength = buffer.getBlockEndBufferLength(nowPlay);
 			nowPlay++;
+			
+			
+			
 			//System.out.println("buffer(Block"+nowPlay+"End) = " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " -> " + buffer.getBlockEndBufferLength(nowPlay));
 			//System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
 			nowRate = nowBlock.getNewRate();
 		}
+		//System.out.println("maxBufferLength = " + maxBufferLength + " , minBufferLength = " + minBufferLength);
 	}
 	
 	public static double [][] loadBandwidth()
@@ -97,10 +110,36 @@ public class MainMaxBW {
 			while(line!=null)
 			{
 				tokenizer = new StringTokenizer(line);
-				ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) *4;
-				ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) *4;
-				ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) *4;
-				ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) *4;
+				if(cnt>=0 && cnt<500){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.4;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.8;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.4;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.7;
+				}
+				else if(cnt>=500 && cnt<750){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.2;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.0;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.3;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.2;
+				}
+				else if(cnt>=750 && cnt<1000){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.0;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.5;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.0;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.0;
+				}
+				else if(cnt>=1000 && cnt<1500){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.1;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.2;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.3;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.4;
+				}
+				else if(cnt>=1500){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.1;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 5.2;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.1;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 3.9;
+				}
 				line = inFile.readLine();
 				cnt++;
 			}

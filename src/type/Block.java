@@ -167,7 +167,11 @@ public class Block {
 		}*/
 		int newSelect = 0;
 		//double kP = 0.002, kD = 2;
-		double kP = 0.5, kD = 0.8;
+		double kP = 1.1, kD = 0.8;
+		if(serverSize == 1){
+			kP = 1.5;
+			kD = 0.8;
+		}
 		int k = bList.indexOf(this);
 		
 		double BufferLength = buffer.getBlockEndBufferLength(bList.indexOf(this));
@@ -225,7 +229,7 @@ public class Block {
 			
 			newSelect = rList.getNewRateID(newRate);
 			
-			//System.out.println("newRate = " + newRate + " ,newSelect = " + newSelect + " ,selectID = " + selectID);
+			System.out.println("newRate = " + newRate + " ,newSelect = " + newSelect + " ,selectID = " + selectID);
 			
 			
 			/*if(lastBlock != null && lastBlock.isTriRateChange())

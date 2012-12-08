@@ -3,6 +3,7 @@ package app;
 import java.io.BufferedReader;
 import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.plot.DataSetPlot;
+import com.panayotis.iodebug.Debug;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,16 +30,11 @@ public class Main {
 		// TODO Auto-generated method stub
 		DecimalFormat dcmFmt = new DecimalFormat("0.00");
 		int tatolFragNum = 0;
-		int maxLengthBlock = 8;
+		int maxLengthBlock = 5;
 		double playBackTime = 5;
 		double maxPlayBackTime = 1000;
 		double qmin = 15;
 		double qmax = 50;
-		
-		JavaPlot p = new JavaPlot("E:\\workspace\\gnuplot\\bin\\pgnuplot.exe");
-		p.setTitle("Default Terminal Title");
-        p.getAxis("x").setLabel("X axis", "Arial", 20);
-        p.getAxis("y").setLabel("Y axis");
 		
 		//init video list
 		int[] r = {300,700,1500,2500,3500};
@@ -51,9 +47,7 @@ public class Main {
 						   {90,100,120,130,80,70,100,150,70,90},
 						   {900,1300,1500,1400,1450,1350,1290,1370,1440,1300},
 						   {1600,1900,2400,2450,2590,2610,2700,2500,2600,2510}};
-		DataSetPlot s = new DataSetPlot(sbww);
-		p.addPlot(s);
-		p.plot();
+
 		
 		/*double [][]sbww = {{1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000},
 				{150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150},
@@ -70,6 +64,9 @@ public class Main {
 		//init buffer
 		Buffer buffer = new Buffer(bList);
 		
+		double maxBufferLength = 0;
+		double minBufferLength = 99999;
+		
 		int nowPlay = 0;
 		int nowRate = 0;
 		double timedownloadDur = 0;
@@ -78,6 +75,8 @@ public class Main {
 		nowBlock.setQmin(qmin);
 		bList.add(nowBlock);
 		nowBlock.init();
+		maxBufferLength = buffer.getBlockEndBufferLength(nowPlay);
+		minBufferLength = buffer.getBlockEndBufferLength(nowPlay);
 		//System.out.println("buffer(Block"+nowPlay+"End) = " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " -> " + buffer.getBlockEndBufferLength(nowPlay));
 		//System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
 		timedownloadDur += nowBlock.getDownloadDur(nowBlock.getFragNum()-1);
@@ -85,7 +84,7 @@ public class Main {
 		nowRate = nowBlock.getNewRate();
 		
 		//maxPlayBackTime -= buffer.getBlockEndBufferLength(nowPlay);
-		while(bList.size()<100)
+		while(bList.size()<134)
 		//for(int i=0;i<10;i++)
 		{
 			//int startTime = 0;
@@ -95,6 +94,10 @@ public class Main {
 			nowBlock.setQmin(qmin);
 			bList.add(nowBlock);
 			nowBlock.init();
+			if(buffer.getBlockEndBufferLength(nowPlay) > maxBufferLength)
+				maxBufferLength = buffer.getBlockEndBufferLength(nowPlay);
+			if(buffer.getBlockEndBufferLength(nowPlay) < minBufferLength)
+				minBufferLength = buffer.getBlockEndBufferLength(nowPlay);
 			nowPlay++;
 			//System.out.println("buffer(Block"+nowPlay+"End) = " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " -> " + buffer.getBlockEndBufferLength(nowPlay));
 			//System.out.println(nowRate + " " + nowBlock.getDownloadDur(nowBlock.getFragNum()-1) + " " +buffer.getBlockEndBufferLength(nowPlay)+" ");
@@ -104,6 +107,7 @@ public class Main {
 			tatolFragNum += nowBlock.getFragNum();
 		}
 		
+		//System.out.println("maxBufferLength = " + maxBufferLength + " , minBufferLength = " + minBufferLength);
 		//System.out.println("tatolFragNum = " + tatolFragNum);
 		//tline.printServerAll();
 	}
@@ -119,13 +123,71 @@ public class Main {
 			fr = new FileReader(file);
 			BufferedReader inFile = new BufferedReader(fr);
 			String line = inFile.readLine();
+			int decnt = 0;
 			while(line!=null)
 			{
 				tokenizer = new StringTokenizer(line);
-				ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 3;
-				ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2;
-				ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 3;
-				ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2;
+				
+				
+				
+				if(cnt>=600 && cnt<750){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.0;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.5;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.9;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.5;
+				}
+				else if(cnt>=800 && cnt<1300){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.8;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.7;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.9;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.0;
+				}
+				else if(cnt>=1500 && cnt<1800){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.9;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.6;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 3.0;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.5;
+				}
+				else
+				{
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.8;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.5;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.9;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.5;
+				}
+				
+				/*if(cnt>=0 && cnt<500){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.8;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.5;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.9;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.5;
+				}
+				else if(cnt>=500 && cnt<750){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.9;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.1;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.7;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.2;
+				}
+				else if(cnt>=750 && cnt<1000){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.0;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.5;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.0;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.0;
+				}
+				else if(cnt>=1000 && cnt<1500){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.3;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.7;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.4;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.7;
+				}
+				else if(cnt>=1500){
+					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.8;
+					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.5;
+					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.9;
+					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.5;
+				}*/
+				
+				
 				line = inFile.readLine();
 				cnt++;
 			}

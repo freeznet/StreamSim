@@ -107,16 +107,16 @@ public class Fragment {
 	
 	public int getNewRate()
 	{
-		double pRate = 0;
+		double pRate = bitrate;
 		int newSelect = 0;
 		//double kP = 0.002, kD = 2;
-		double kP = 0.3, kD = 0.03;
+		double kP = 0.5, kD = 0.02;
 		
-		for(Server s : serverList.getLserver())
+		/*for(Server s : serverList.getLserver())
 		{
 			pRate += s.getBandAvgwidth(downloadEndTime);
 		}
-		pRate /= serverList.getLserver().size();
+		pRate /= serverList.getLserver().size();*/
 		double BufferLength = downloadEndBufferLength;
 		if(Math.floor(BufferLength)<qmax && Math.floor(BufferLength)>qmin)
 			return selectID;
@@ -138,8 +138,12 @@ public class Fragment {
 			double fragDownDur = downloadDur;
 			vk = ((1/(playbackTime*alphaN)) * kP * (BufferLength - q0))
 					+ 
-					((1/(playbackTime*alphaN)) * kD * ((q_fragtEnk - q_blockSk) / (fragDownDur)));
-			//System.out.println("alphaN = " + alphaN);
+					((1/(playbackTime*alphaN)) * kD * (((BufferLength - q0) - (q_blockSk - q0)) / (fragDownDur)));
+			/*System.out.println("alphaN = " + alphaN + " ,playbackTime = " + playbackTime);
+			System.out.println("BufferLength = " + BufferLength + " ,q0 = " + q0);
+			System.out.println("q_fragtEnk = " + q_fragtEnk + " ,q_blockSk = " + q_blockSk);
+			System.out.println("fragDownDur = " + fragDownDur + " ,1st = " + (1/(playbackTime*alphaN)) * kP * (BufferLength - q0));
+			System.out.println("2nd = " + ((1/(playbackTime*alphaN)) * kD * ((q_fragtEnk - q_blockSk) / (fragDownDur))));*/
 			/*System.out.println("===================" + i + "/" + (fragNum-1)+"===================");
 			System.out.println("q0 = " + q0);
 			System.out.println("alphaN = " + alphaN);
@@ -161,6 +165,8 @@ public class Fragment {
 			}
 			//compute new rate
 			double newRate = pRate + vtemp;
+			
+			//System.out.println("newRate = " + newRate);
 			
 			newSelect = vrateList.getNewRateID(newRate);
 			

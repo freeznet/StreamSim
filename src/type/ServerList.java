@@ -21,7 +21,7 @@ public class ServerList {
 		/*for(int i=0;i<lserver.size();i++)
 		{
 			Server ser = lserver.get(i);
-			System.out.println(i + ":" + ser.getId() + " - - - " + ser.getBandAvgwidth(0));
+			System.out.println(i + ":" + ser.getId() + " - - - " + ser.getBandAvgwidth());
 		}*/
 	}
 	public List<Server> getLserver() {

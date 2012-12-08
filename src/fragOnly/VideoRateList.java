@@ -26,6 +26,7 @@ public class VideoRateList {
 				temp = rateList[i];
 				ret = i;
 			}
+			//System.out.println(ret);
 		}
 		return ret;
 	}

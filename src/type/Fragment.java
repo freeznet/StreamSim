@@ -43,6 +43,9 @@ public class Fragment {
 		
 		double fileSize = playbackTime * bitrate;
 		double time = downloadStartTime;
+		
+		double bwTotal = 0;
+		int bwCnt = 0;
 		while(fileSize>0)
 		{
 			double bw = 0;
@@ -55,11 +58,17 @@ public class Fragment {
 			
 			double downloadSize = (Math.ceil(time+0.0000000001) - time) * bw;
 			//System.out.println("bw = " + bw + " downloadSize = "+downloadSize);
+			
+			bwTotal += bw;
+			bwCnt ++;
+			
 			if(fileSize - downloadSize>=0){
 				downloadTempDur = Math.ceil(time+0.0000000001) - time;
 				fileSize -= downloadSize;
 				tline.setBufferSize((int) Math.floor(time), downloadSize/bitrate);
 				tline.setServerBufferSize(downloadedBy.getId()-1, (int) Math.floor(time), downloadSize/bitrate);
+				
+				
 			}
 			else
 			{
@@ -82,7 +91,10 @@ public class Fragment {
 		}
 		done=true;
 		//System.out.println("id " + block.getId() +"/"+id + ":" + downloadedBy.getId()+" - > downloadStartTime:" + downloadStartTime + " downloadEndTime:" + downloadEndTime);
-		System.out.println(downloadedBy.getId() + " " + block.getId()+" "+ id + " " +"0 " + downloadEndTime + " " + bitrate + " " + buffer.getBufferLengthWithBlocknFrag(block, this));
+		if(block.getServerSize()!=1)
+			System.out.println(downloadedBy.getId() + " " + block.getId()+" "+ id + " " +"0 " + downloadEndTime + " " + bitrate + " " + buffer.getBufferLengthWithBlocknFrag(block, this) + " " + bwTotal/bwCnt);
+		else if(block.getServerSize()==1)
+			System.out.println(downloadedBy.getId() + " " + block.getId()+" "+ id + " " +"0 " + downloadEndTime + " " + bitrate + " " + buffer.getBlockEndBufferLength(block) + " " + bwTotal/bwCnt);
 		//System.out.println(downloadedBy.getId() + " " + block.getId()+" "+ id + " " +"0 " + downloadStartTime + " " + bitrate + " " + buffer.getBufferLengthWithBlocknFrag(block, this));
 
 		return downloadDur;

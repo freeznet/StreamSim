@@ -107,6 +107,29 @@ public class Buffer {
 		ret -= download;
 		return ret;
 	}
+	
+	public double getBlockEndBufferLength(Block k)
+	{
+		double ret = getBlockStartBufferLength(bList.indexOf(k));
+		ret += k.getFragList().size() * k.getPlaytime();
+		//System.out.println("k = "+ k + " full buffer = " + ret);
+		
+		/*double m= 0 ,n= 0 ,o= 0 ,p = 0;
+		for(int j = 0; j<bList.get(k).getServerSize(); j++)
+		{
+			for(int i=0;i<bList.get(k).getFragList().size();i++)
+			{
+				p += bList.get(k).getSch().getX(i, j);
+			}
+			o += bList.get(k).getSch().getX(bList.get(k).getFragList().size()-1, j) * p;
+			n += bList.get(k).getSch().getX(bList.get(k).getFragList().size()-1, j) * bList.get(k).getSlist().getLserver().get(j).getBandwidth();
+		}
+		m = o / n;*/
+		double download = k.getDownloadDur(k.getFragNum()-1);
+		ret -= download;
+		return ret;
+	}
+	
 	public double getDownloadDur() {
 		return downloadDur;
 	}
