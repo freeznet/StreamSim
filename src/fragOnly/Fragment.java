@@ -110,7 +110,7 @@ public class Fragment {
 		double pRate = bitrate;
 		int newSelect = 0;
 		//double kP = 0.002, kD = 2;
-		double kP = 0.5, kD = 0.02;
+		double kP =1.5, kD =0.002;
 		
 		/*for(Server s : serverList.getLserver())
 		{
@@ -139,6 +139,10 @@ public class Fragment {
 			vk = ((1/(playbackTime*alphaN)) * kP * (BufferLength - q0))
 					+ 
 					((1/(playbackTime*alphaN)) * kD * (((BufferLength - q0) - (q_blockSk - q0)) / (fragDownDur)));
+			
+			double r_preidctedK = downloadedBy.getBandAvgwidth(downloadEndTime);
+			double delta_v = (r_preidctedK / playbackTime * kP * (BufferLength - q0))
+							+(r_preidctedK / playbackTime * kD *((BufferLength - q0) - (q_blockSk - q0)) / (fragDownDur));
 			/*System.out.println("alphaN = " + alphaN + " ,playbackTime = " + playbackTime);
 			System.out.println("BufferLength = " + BufferLength + " ,q0 = " + q0);
 			System.out.println("q_fragtEnk = " + q_fragtEnk + " ,q_blockSk = " + q_blockSk);
@@ -154,6 +158,7 @@ public class Fragment {
 			System.out.println("vk["+i+"] = " + vk[i]);*/
 			
 			//compute max min
+			//System.out.println("vk = " + vk + " / delta_v = " +delta_v);
 			double vtemp = 0;
 			if(BufferLength<=qmin)
 			{
@@ -170,7 +175,7 @@ public class Fragment {
 			
 			newSelect = vrateList.getNewRateID(newRate);
 			
-			//System.out.println("newRate = " + newRate + " ,newSelect = " + newSelect + " ,selectID = " + selectID);
+			//System.out.println("======newRate = " + newRate + " ,newSelect = " + newSelect + " ,selectID = " + selectID + " ,r_preidctedK = " +r_preidctedK);
 			
 			if(Math.floor(BufferLength)<=qmin && newSelect>selectID)
 				newSelect = selectID;

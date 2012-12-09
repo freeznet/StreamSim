@@ -110,31 +110,31 @@ public class MainMaxBW {
 			while(line!=null)
 			{
 				tokenizer = new StringTokenizer(line);
-				if(cnt>=0 && cnt<500){
+				if(cnt>=0 && cnt<250){
 					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.4;
 					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.8;
 					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.4;
 					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.7;
 				}
-				else if(cnt>=500 && cnt<750){
+				else if(cnt>=250 && cnt<550){
 					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.2;
 					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.0;
 					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.3;
 					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.2;
 				}
-				else if(cnt>=750 && cnt<1000){
+				else if(cnt>=550 && cnt<800){
 					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.0;
 					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.5;
 					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.0;
 					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.0;
 				}
-				else if(cnt>=1000 && cnt<1500){
+				else if(cnt>=800 && cnt<1300){
 					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.1;
 					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.2;
 					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.3;
 					ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 1.4;
 				}
-				else if(cnt>=1500){
+				else if(cnt>=1300){
 					ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.1;
 					ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 5.2;
 					ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 2.1;

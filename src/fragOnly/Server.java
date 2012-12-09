@@ -85,12 +85,18 @@ public class Server {
 	{
 		double ret = 0;
 		int i;
-		for(i=0;i<Math.ceil(sec + 0.00000000000000001);i++)
+		int startTime = 0;
+		int endTime = (int)Math.ceil(sec + 0.00000000000000001);
+		int cnt = 0;
+		if(endTime > 15)
+			startTime = endTime - 15;
+		for(i=startTime;i<endTime;i++)
 		{
 			ret += bandwidth[i];
+			cnt++;
 			//ret += bandwidth[0];
 		}
-		ret = ret / (i);
+		ret = ret / cnt;
 		//System.out.println("get "+sec+"'s BW:" + ret + " with i = "+i);
 		return ret;
 	}

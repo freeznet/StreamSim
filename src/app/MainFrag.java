@@ -45,12 +45,14 @@ public class MainFrag {
 		ServerList slist = new ServerList(loadBandwidth());
 
 		List<Fragment> fragList = new ArrayList<Fragment>();
+		List<Fragment> doneFragList = new ArrayList<Fragment>();
 		
 		BitRateHistory brHistory = new BitRateHistory();
+		History history = new History();
 		
 		int nowPlay = 0;
 		int nowRate = 0;
-		brHistory.setChangeRate(0, rateList.getRateList()[nowRate]);
+		
 
 		Buffer buffer = new Buffer(fragList, slist, brHistory);
 		
@@ -66,6 +68,7 @@ public class MainFrag {
 		
 		for(Server n : slist.getLserver())
 		{
+			brHistory.setChangeRate(0, rateList.getRateList()[nowRate],n.getId());
 			Fragment nowFrag = new Fragment(fragCnt, buffer, slist, rateList, fragList, n, nowRate, brHistory);
 			fragCnt++;
 			nowFrag.setQmax(qmax);
@@ -73,23 +76,32 @@ public class MainFrag {
 			fragList.add(nowFrag);
 			nowFrag.setDownloadStartBufferLength(bufferLength);
 			nowFrag.getDownloadDur();
+			
 		}
 		
-		while(fragCnt<1500)
+		while(fragCnt<400)
 		{
 			//System.out.println(time);
 			Fragment justDone = getJustDoneFrag(time,fragList);
 			if(justDone!=null)
 			{
-				bufferLength += justDone.getPlaytime() - justDone.getDownloadDur();
+				if(!doneFragList.contains(justDone))
+					doneFragList.add(justDone);
+				//bufferLength += justDone.getPlaytime() - justDone.getDownloadDur();
+				//bufferLength = doneFragList.size() * justDone.getPlaytime() - justDone.getDownloadDur();
+				bufferLength = getBufferLength(justDone,fragList);
 				justDone.setDownloadEndBufferLength(bufferLength);
 				Server s = justDone.getDownloadedBy();
-				System.out.println(s.getId() + " " + "0 0"+" "+justDone.getId() + " " + justDone.getDownloadStartTime() + " " + justDone.getBitrate() + " " + bufferLength);
+				//System.out.println(s.getId() + " " + "0 0"+" "+justDone.getId() + " " + justDone.getDownloadEndTime() + " " + justDone.getBitrate() + " " + bufferLength + " " + justDone.getDownloadDur());
 				//System.out.println(s.getId() + " " + "0 0"+" "+justDone.getId() + " " +"0 " + downloadEndTime + " " + bitrate + " " + buffer.getBufferLengthWithBlocknFrag(block, this));
+				
+				Info nowInfo = new Info(justDone);
+				history.addInfo(nowInfo);
+				
 				int newRate = justDone.getNewRate();
 				if(newRate!=nowRate)
 				{
-					brHistory.setChangeRate(justDone.getDownloadEndTime(), rateList.getRateList()[newRate]);
+					brHistory.setChangeRate(justDone.getDownloadEndTime(), rateList.getRateList()[newRate], s.getId());
 					nowRate = newRate;
 				}
 				
@@ -107,6 +119,11 @@ public class MainFrag {
 			else
 				time ++;
 		}
+		
+		//history.printMinMax();
+		history.printByServer();
+		//history.print();
+		//history.printMinMax();
 		
 		
 		//Fragment nowFrag = new Fragment(fragCnt, buffer, slist, rateList, fragList, downBy, nowRate);
@@ -152,6 +169,24 @@ public class MainFrag {
 		return ret;
 	}
 	
+	public static double getBufferLength(Fragment d, List<Fragment> fragList)
+	{
+		double ret = 0;
+		int cnt = 0;
+		double downTime = d.getDownloadEndTime();
+		for(Fragment r : fragList)
+		{
+			if(r.getId()<=d.getId())
+			{
+				ret += r.getPlaytime();
+				if(r.getDownloadDur() > downTime)
+					downTime = r.getDownloadEndTime();
+			}
+		}
+		
+		return ret - downTime;
+	}
+	
 	public static double [][] loadBandwidth()
 	{
 		double[][] ret = new double[4][2001];
@@ -166,10 +201,10 @@ public class MainFrag {
 			while(line!=null)
 			{
 				tokenizer = new StringTokenizer(line);
-				ret[0][cnt] = Double.parseDouble(tokenizer.nextToken()) * 4;
-				ret[1][cnt] = Double.parseDouble(tokenizer.nextToken()) * 4;
-				ret[2][cnt] = Double.parseDouble(tokenizer.nextToken()) * 4;
-				ret[3][cnt] = Double.parseDouble(tokenizer.nextToken()) * 4;
+				ret[0][cnt] = Double.parseDouble(tokenizer.nextToken())  * 2;
+				ret[1][cnt] = Double.parseDouble(tokenizer.nextToken())  * 2;
+				ret[2][cnt] = Double.parseDouble(tokenizer.nextToken())  * 2;
+				ret[3][cnt] = Double.parseDouble(tokenizer.nextToken())  * 2;
 				line = inFile.readLine();
 				cnt++;
 			}

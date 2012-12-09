@@ -229,7 +229,7 @@ public class Block {
 			
 			newSelect = rList.getNewRateID(newRate);
 			
-			System.out.println("newRate = " + newRate + " ,newSelect = " + newSelect + " ,selectID = " + selectID);
+			//System.out.println("newRate = " + newRate + " ,newSelect = " + newSelect + " ,selectID = " + selectID);
 			
 			
 			/*if(lastBlock != null && lastBlock.isTriRateChange())

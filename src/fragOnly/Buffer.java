@@ -122,14 +122,14 @@ public class Buffer {
 			for(Server s:sList.getLserver())
 			{
 				//System.out.println("i = " + i + " -> " + s.getBandwidth(i) / brHistory.getChangeRate(i));
-				ret += (s.getBandwidth(i) / brHistory.getChangeRate(i));
+				ret += (s.getBandwidth(i) / brHistory.getChangeRate(i,s.getId()));
 			}
 		}
 		
 		for(Server s:sList.getLserver())
 		{
 			//System.out.println("doubleTime = " + doubleTime + " -> " + s.getBandwidth(intTime) * doubleTime / brHistory.getChangeRate(intTime));
-			ret += (s.getBandwidth(intTime) * doubleTime / brHistory.getChangeRate(intTime));
+			ret += (s.getBandwidth(intTime) * doubleTime / brHistory.getChangeRate(intTime,s.getId()));
 		}
 		
 		return ret - endTime;
@@ -148,14 +148,14 @@ public class Buffer {
 			for(Server s:sList.getLserver())
 			{
 				//System.out.println("i = " + i + "/" + brHistory.getChangeRate(i) + " -> " + s.getBandwidth(i) / brHistory.getChangeRate(i));
-				ret += (s.getBandwidth(i) / brHistory.getChangeRate(i));
+				ret += (s.getBandwidth(i) / brHistory.getChangeRate(i,s.getId()));
 			}
 		}
 		
 		for(Server s:sList.getLserver())
 		{
 			//System.out.println("doubleTime = " + doubleTime + " -> " + s.getBandwidth(intTime) * doubleTime / brHistory.getChangeRate(intTime));
-			ret += (s.getBandwidth(intTime) * doubleTime / brHistory.getChangeRate(intTime));
+			ret += (s.getBandwidth(intTime) * doubleTime / brHistory.getChangeRate(intTime,s.getId()));
 		}
 		
 		return ret - endTime;

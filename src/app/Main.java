@@ -84,7 +84,7 @@ public class Main {
 		nowRate = nowBlock.getNewRate();
 		
 		//maxPlayBackTime -= buffer.getBlockEndBufferLength(nowPlay);
-		while(bList.size()<134)
+		while(bList.size()<136)
 		//for(int i=0;i<10;i++)
 		{
 			//int startTime = 0;
@@ -127,7 +127,6 @@ public class Main {
 			while(line!=null)
 			{
 				tokenizer = new StringTokenizer(line);
-				
 				
 				
 				if(cnt>=600 && cnt<750){
